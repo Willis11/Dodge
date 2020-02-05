@@ -45,19 +45,19 @@ function updateCube(){
   }
 
   if(rightPressed){
-    dx = 1;
+    dx = 2;
   }
 
   if(leftPressed){
-    dx = -1;
+    dx = -2;
   }
 
   if(upPressed){
-    dy = -1;
+    dy = -2;
   }
 
   if(downPressed){
-    dy = 1;
+    dy = 2;
   }
 
 }
@@ -70,6 +70,7 @@ function updateGame(){
   updateCube();
   updateEnemyCube();
   checkCollision();
+  increaseDifficulty();
   ifGameEnds();
 }
 
@@ -134,15 +135,13 @@ for(var f = 0; f < 5; f++){
   enemies.push(enemy);
 }
 
-console.log(enemies);
-
-console.log(enemies[0].enemyCubeX);
-//var enemyCubeX = 0;
-//var enemyCubeY = generatePositionEnemyCube(canvas.height);
-
+var drawCubeNumber;
 
 function drawEnemyCube(){
-    for(var x = 0; x < 5; x++){
+
+     drawCubeNumber = enemies.length;
+
+    for(var x = 0; x < drawCubeNumber; x++){
       ctx.beginPath();
       ctx.rect(enemies[x].enemyCubeX, enemies[x].enemyCubeY, enemies[x].enemyCubeWidth, enemies[x].enemyCubeHeight);
       ctx.fillStyle = "#f54242";
@@ -153,10 +152,11 @@ function drawEnemyCube(){
 
 function updateEnemyCube(){
   drawEnemyCube();
-  for(var h = 0; h < 5; h++){
+  for(var h = 0; h < drawCubeNumber; h++){
     if(enemies[h].enemyCubeX == 600){
       enemies[h].enemyCubeX = 0;
       enemies[h].enemyCubeY = generatePositionEnemyCube(canvas.height);
+      enemies[h].enemyCubeSpeed = generateRandomSpeed();
     }
       enemies[h].enemyCubeX += enemies[h].enemyCubeSpeed;
   }
@@ -164,12 +164,12 @@ function updateEnemyCube(){
   }
 
 function generatePositionEnemyCube(canvasHeight){
-  var randomNumber = Math.floor(Math.random() * canvasHeight) + 1;
+  var randomNumber = Math.floor(Math.random() * canvasHeight - 10) + 1;
   return randomNumber;
 }
 
 function generateRandomSpeed(){
-  var randomSpeed = Math.floor(Math.random() * 2) + 1;
+  var randomSpeed = Math.floor(Math.random() * 2) + 2;
   return randomSpeed;
 }
 //-------------------
@@ -178,7 +178,7 @@ function generateRandomSpeed(){
 var collision = false;
 
 function checkCollision(){
-  for(var j = 0; j < 5; j++){
+  for(var j = 0; j < drawCubeNumber; j++){
     if(x + 25 > enemies[j].enemyCubeX && x < enemies[j].enemyCubeX + 10 && y + 25 > enemies[j].enemyCubeY && y < enemies[j].enemyCubeY + 10){
       collision = true;
     }
@@ -205,11 +205,41 @@ function gameTimeCounter(){
 
 setInterval(gameTimeCounter, 10);
 
+//-----------------
+//Game Difficulty
+//-----------------
+var hasIncreased = false;
+
+function increaseDifficulty(){
+  if(gameTimer == 10 && hasIncreased == false){
+    hasIncreased = true;
+    for(var l = 0; l < 3; l++){
+      var enemy2 =  new createEnemyCubeObject(10, 10, 0, generatePositionEnemyCube(canvas.height), generateRandomSpeed());
+      enemies.push(enemy2);
+    }
+  }
+
+  if(gameTimer == 30 && hasIncreased == true){
+    hasIncreased = false;
+    for(var w = 0; w < 4; w++){
+      var enemy2 =  new createEnemyCubeObject(10, 10, 0, generatePositionEnemyCube(canvas.height), generateRandomSpeed());
+      enemies.push(enemy2);
+    }
+  }
+
+  if(gameTimer == 50 && hasIncreased == false){
+    hasIncreased = true;
+    for(var r = 0; r < 5; r++){
+      var enemy2 =  new createEnemyCubeObject(10, 10, 0, generatePositionEnemyCube(canvas.height), generateRandomSpeed());
+      enemies.push(enemy2);
+    }
+  }
+}
+
 
 //-------------------
 //Finish Game
 //-------------------
-
 function ifGameEnds(){
   if(collision == true){
     collision = false;
