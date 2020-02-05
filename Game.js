@@ -74,7 +74,7 @@ function updateGame(){
 }
 
 //update time
-setInterval(updateGame, 10);
+var gameInterval = setInterval(updateGame, 10);
 
 //keyboard control
 var upPressed = false;
@@ -212,11 +212,12 @@ setInterval(gameTimeCounter, 10);
 
 function ifGameEnds(){
   if(collision == true){
+    collision = false;
     var gameOver1 = "Game Over - Time of "
     var gameOver2 = gameOver1.concat('', gameTimer);
     var gameOver3 = gameOver2.concat(' ', "Seconds");
     alert(gameOver3);
-    location.reload();
-
+    document.location.reload();
+    clearInterval(gameInterval);
   }
 }
